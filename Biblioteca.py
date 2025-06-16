@@ -5,122 +5,122 @@ from devolucao import devolucao as Devolucao
 
 class Biblioteca:
     def __init__(self):
-        self.livros = []
-        self.usuarios = []
-        self.historico_emprestimos = []
-        self.livros_emprestados = set()
-        self.reservas = {}
+      self.livros = []
+      self.usuarios = []
+      self.historico_emprestimos = []
+      self.livros_emprestados = set()
+      self.reservas = {}
 
     def cadastrar_livro(self, titulo, autor, isbn, faixa_etaria, quantidade, data):
-        print("\n--- Cadastro de Livro ---")
-        try:
-            quantidade = int(quantidade)
-            livro = Livro(titulo, autor, isbn, faixa_etaria, quantidade, data)
-            self.livros.append(livro)
-            self.reservas[isbn] = deque()
-            print(f"Livro '{titulo}' cadastrado com sucesso!")
-        except ValueError as e:
-            print(f"Erro: {e}")
+      print("\n--- Cadastro de Livro ---")
+      try:
+        quantidade = int(quantidade)
+        livro = Livro(titulo, autor, isbn, faixa_etaria, quantidade, data)
+        self.livros.append(livro)
+        self.reservas[isbn] = deque()
+        print(f"Livro '{titulo}' cadastrado com sucesso!")
+      except ValueError as e:
+        print(f"Erro: {e}")
 
     def cadastrar_usuario(self, nome, idade, documento, telefone):
-        print("\n--- Cadastro de Usuário ---")
-        usuario = Usuario(nome, idade, documento, telefone)
-        self.usuarios.append(usuario)
-        print(f"Usuário '{nome}' cadastrado com sucesso!")
+      print("\n--- Cadastro de Usuário ---")
+      usuario = Usuario(nome, idade, documento, telefone)
+      self.usuarios.append(usuario)
+      print(f"Usuário '{nome}' cadastrado com sucesso!")
 
     def emprestar_livro(self, nome_usuario, titulo_livro):
-        print("\n--- Empréstimo de Livro ---")
-        usuario = self.buscar_usuario_por_nome(nome_usuario)
-        livro = self.buscar_livro_por_titulo(titulo_livro)
+      print("\n--- Empréstimo de Livro ---")
+      usuario = self.buscar_usuario_por_nome(nome_usuario)
+      livro = self.buscar_livro_por_titulo(titulo_livro)
 
-        if not usuario or not livro:
-            print("Usuário ou livro não encontrado.")
-            return
+      if not usuario or not livro:
+        print("Usuário ou livro não encontrado.")
+        return
 
-        if livro.disponivel:
-            livro.disponivel = False
-            self.livros_emprestados.add(livro.isbn)
-            self.historico_emprestimos.append(("empréstimo", titulo_livro, nome_usuario))
-            print(f"Livro '{titulo_livro}' emprestado para {nome_usuario}!")
-        else:
-            self.reservas[livro.isbn].append(nome_usuario)
-            print(f"Livro indisponível. {nome_usuario} entrou na fila de espera.")
+      if livro.disponivel:
+        livro.disponivel = False
+        self.livros_emprestados.add(livro.isbn)
+        self.historico_emprestimos.append(("empréstimo", titulo_livro, nome_usuario))
+        print(f"Livro '{titulo_livro}' emprestado para {nome_usuario}!")
+      else:
+        self.reservas[livro.isbn].append(nome_usuario)
+        print(f"Livro indisponível. {nome_usuario} entrou na fila de espera.")
 
     def mostrar_historico(self):
-        print("\n--- Histórico de Empréstimos ---")
-        for registro in self.historico_emprestimos:
-            print(f"{registro[0].upper()}: {registro[1]} -> {registro[2]}")
+      print("\n--- Histórico de Empréstimos ---")
+      for registro in self.historico_emprestimos:
+        print(f"{registro[0].upper()}: {registro[1]} -> {registro[2]}")
 
     def buscar_livro_por_titulo(self, titulo):
-        for livro in self.livros:
-            if livro.titulo.lower().strip() == titulo.lower().strip():
-                return livro
-        return None
+      for livro in self.livros:
+        if livro.titulo.lower().strip() == titulo.lower().strip():
+          return livro
+      return None
 
     def buscar_usuario_por_nome(self, nome):
-        for usuario in self.usuarios:
-            if usuario.nome.lower().strip() == nome.lower().strip():
-                return usuario
-        return None
+      for usuario in self.usuarios:
+        if usuario.nome.lower().strip() == nome.lower().strip():
+          return usuario
+      return None
 
     def editar_livro(self, titulo):
-        livro = self.buscar_livro_por_titulo(titulo)
-        if livro:
-            print("Edite os dados do livro:")
-            livro.titulo = input("Título: ")
-            livro.autor = input("Autor: ")
-            livro.isbn = input("ISBN: ")
-            livro.faixa_etaria = input("Faixa Etária: ")
-            livro.quantidade = int(input("Quantidade: "))
-            print("Livro editado com sucesso!")
-        else:
-            print("Livro não encontrado.")
+      livro = self.buscar_livro_por_titulo(titulo)
+      if livro:
+        print("Edite os dados do livro:")
+        livro.titulo = input("Título: ")
+        livro.autor = input("Autor: ")
+        livro.isbn = input("ISBN: ")
+        livro.faixa_etaria = input("Faixa Etária: ")
+        livro.quantidade = int(input("Quantidade: "))
+        print("Livro editado com sucesso!")
+      else:
+        print("Livro não encontrado.")
 
     def excluir_livro(self, titulo):
-        livro = self.buscar_livro_por_titulo(titulo)
-        if livro:
-            self.livros.remove(livro)
-            self.reservas.pop(livro.isbn, None)
-            print("Livro excluído com sucesso!")
-        else:
-            print("Livro não encontrado.")
+      livro = self.buscar_livro_por_titulo(titulo)
+      if livro:
+        self.livros.remove(livro)
+        self.reservas.pop(livro.isbn, None)
+        print("Livro excluído com sucesso!")
+      else:
+        print("Livro não encontrado.")
 
     def editar_usuario(self, nome):
-        usuario = self.buscar_usuario_por_nome(nome)
-        if usuario:
-            print("Edite os dados do usuário:")
-            usuario.nome = input("Nome: ")
-            usuario.idade = int(input("Idade: "))
-            usuario.documento = input("Documento: ")
-            usuario.telefone = input("Telefone: ")
-            print("Usuário editado com sucesso!")
-        else:
-            print("Usuário não encontrado.")
+      usuario = self.buscar_usuario_por_nome(nome)
+      if usuario:
+        print("Edite os dados do usuário:")
+        usuario.nome = input("Nome: ")
+        usuario.idade = int(input("Idade: "))
+        usuario.documento = input("Documento: ")
+        usuario.telefone = input("Telefone: ")
+        print("Usuário editado com sucesso!")
+      else:
+        print("Usuário não encontrado.")
 
     def excluir_usuario(self, nome):
-        usuario = self.buscar_usuario_por_nome(nome)
-        if usuario:
-            self.usuarios.remove(usuario)
-            print("Usuário excluído com sucesso!")
-        else:
-            print("Usuário não encontrado.")
+      usuario = self.buscar_usuario_por_nome(nome)
+      if usuario:
+        self.usuarios.remove(usuario)
+        print("Usuário excluído com sucesso!")
+      else:
+        print("Usuário não encontrado.")
 
     def atender_fila_reserva(self, isbn):
-        if isbn in self.reservas and self.reservas[isbn]:
-            proximo_usuario = self.reservas[isbn].popleft()
-            livro = next((livro for livro in self.livros if livro.isbn == isbn), None)
-            if livro:
-                print(f"Livro '{livro.titulo}' agora está disponível. Emprestando automaticamente para {proximo_usuario}.")
-                self.emprestar_livro(proximo_usuario, livro.titulo)
+      if isbn in self.reservas and self.reservas[isbn]:
+        proximo_usuario = self.reservas[isbn].popleft()
+        livro = next((livro for livro in self.livros if livro.isbn == isbn), None)
+        if livro:
+          print(f"Livro '{livro.titulo}' agora está disponível. Emprestando automaticamente para {proximo_usuario}.")
+          self.emprestar_livro(proximo_usuario, livro.titulo)
 
     def listar_livros(self):  # ← NOVA FUNCIONALIDADE
-        print("\n--- Lista de Livros ---")
-        if not self.livros:
-            print("Nenhum livro cadastrado.")
-            return
-        for livro in self.livros:
-            status = "Disponível" if livro.disponivel else "Emprestado"
-            print(f"Título: {livro.titulo} | Autor: {livro.autor} | ISBN: {livro.isbn} | Status: {status} | Quantidade: {livro.quantidade}")
+      print("\n--- Lista de Livros ---")
+      if not self.livros:
+        print("Nenhum livro cadastrado.")
+        return
+      for livro in self.livros:
+        status = "Disponível" if livro.disponivel else "Emprestado"
+        print(f"Título: {livro.titulo} | Autor: {livro.autor} | ISBN: {livro.isbn} | Status: {status} | Quantidade: {livro.quantidade}")
 
 def main():
   biblioteca = Biblioteca()
